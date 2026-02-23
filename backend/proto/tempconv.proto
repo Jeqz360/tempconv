@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package tempconv;
+
+option go_package = "github.com/Jeqz360/tempconv/backend/gen/tempconv";
+
+// TempConv provides temperature unit conversion.
+service TempConv {
+  // Convert Celsius to Fahrenheit.
+  rpc CelsiusToFahrenheit(CelsiusRequest) returns (FahrenheitResponse);
+  // Convert Fahrenheit to Celsius.
+  rpc FahrenheitToCelsius(FahrenheitRequest) returns (CelsiusResponse);
+}
+
+message CelsiusRequest {
+  double celsius = 1;
+}
+
+message FahrenheitResponse {
+  double fahrenheit = 1;
+}
+
+message FahrenheitRequest {
+  double fahrenheit = 1;
+}
+
+message CelsiusResponse {
+  double celsius = 1;
+}

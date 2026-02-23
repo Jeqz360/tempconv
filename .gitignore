@@ -1,0 +1,15 @@
+# Go build artefacts
+backend/server
+
+# Flutter build output
+frontend/build/
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/pubspec.lock
+
+# k6 results
+load-tests/results/
+
+# macOS
+.DS_Store
