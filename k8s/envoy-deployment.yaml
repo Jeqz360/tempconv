@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy
+  labels:
+    app: envoy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: envoy
+  template:
+    metadata:
+      labels:
+        app: envoy
+    spec:
+      containers:
+      - name: envoy
+        # Replace <PROJECT_ID> with your Google Cloud project ID.
+        image: gcr.io/<PROJECT_ID>/tempconv-envoy:latest
+        ports:
+        - containerPort: 8080
+          name: grpc-web
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "32Mi"
+          limits:
+            cpu: "200m"
+            memory: "64Mi"

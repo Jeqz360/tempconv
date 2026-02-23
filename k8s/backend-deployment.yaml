@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        # Replace <PROJECT_ID> with your Google Cloud project ID.
+        image: gcr.io/<PROJECT_ID>/tempconv-backend:latest
+        ports:
+        - containerPort: 50051
+          name: grpc
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "64Mi"
+          limits:
+            cpu: "500m"
+            memory: "128Mi"
+        readinessProbe:
+          grpc:
+            port: 50051
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          grpc:
+            port: 50051
+          initialDelaySeconds: 10
+          periodSeconds: 20
