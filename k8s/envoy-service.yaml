@@ -9,4 +9,4 @@ spec:
   - name: grpc-web
     port: 8080
     targetPort: 8080
-  type: ClusterIP
+  type: LoadBalancer

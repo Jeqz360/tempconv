@@ -12,18 +12,13 @@
   <title>Temperature Converter</title>
 </head>
 <body>
-  <script src="flutter.js" defer></script>
-  <script>
-    window.addEventListener('load', function(ev) {
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: { serviceWorkerVersion: serviceWorkerVersion },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
-          });
-        }
-      });
-    });
-  </script>
+  <div id="app"></div>
+  <noscript>
+    <h2>Hey there!</h2>
+    <p>
+      Your Flutter app's code was not loaded here because JavaScript is disabled.
+    </p>
+  </noscript>
+  <script src="flutter_bootstrap.js"></script>
 </body>
 </html>

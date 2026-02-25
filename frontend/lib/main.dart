@@ -39,6 +39,16 @@ class _TempConvPageState extends State<TempConvPage> {
   String _result = '';
   bool _loading = false;
   bool _celsiusToFahrenheit = true;
+  bool _useBackend = true; // Toggle between local and backend calculation
+
+  // Local calculation functions
+  double _celsiusToFahrenheitLocal(double celsius) {
+    return celsius * 9.0 / 5.0 + 32.0;
+  }
+
+  double _fahrenheitToCelsiusLocal(double fahrenheit) {
+    return (fahrenheit - 32.0) * 5.0 / 9.0;
+  }
 
   @override
   void initState() {
@@ -70,16 +80,36 @@ class _TempConvPageState extends State<TempConvPage> {
     });
 
     try {
-      if (_celsiusToFahrenheit) {
-        final resp = await _client
-            .celsiusToFahrenheit(CelsiusRequest(celsius: input));
-        setState(() =>
-            _result = '${resp.fahrenheit.toStringAsFixed(2)} °F');
+      final stopwatch = Stopwatch()..start();
+      
+      if (_useBackend) {
+        // Backend calculation via gRPC
+        if (_celsiusToFahrenheit) {
+          final resp = await _client
+              .celsiusToFahrenheit(CelsiusRequest(celsius: input));
+          stopwatch.stop();
+          setState(() =>
+              _result = '${resp.fahrenheit.toStringAsFixed(2)} °F\n(Backend: ${stopwatch.elapsedMilliseconds}ms)');
+        } else {
+          final resp = await _client
+              .fahrenheitToCelsius(FahrenheitRequest(fahrenheit: input));
+          stopwatch.stop();
+          setState(() =>
+              _result = '${resp.celsius.toStringAsFixed(2)} °C\n(Backend: ${stopwatch.elapsedMilliseconds}ms)');
+        }
       } else {
-        final resp = await _client
-            .fahrenheitToCelsius(FahrenheitRequest(fahrenheit: input));
-        setState(() =>
-            _result = '${resp.celsius.toStringAsFixed(2)} °C');
+        // Local calculation
+        if (_celsiusToFahrenheit) {
+          final result = _celsiusToFahrenheitLocal(input);
+          stopwatch.stop();
+          setState(() =>
+              _result = '${result.toStringAsFixed(2)} °F\n(Local: ${stopwatch.elapsedMicroseconds}μs)');
+        } else {
+          final result = _fahrenheitToCelsiusLocal(input);
+          stopwatch.stop();
+          setState(() =>
+              _result = '${result.toStringAsFixed(2)} °C\n(Local: ${stopwatch.elapsedMicroseconds}μs)');
+        }
       }
     } catch (e) {
       setState(() => _result = 'Error: $e');
@@ -106,6 +136,21 @@ class _TempConvPageState extends State<TempConvPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // Calculation mode toggle
+                SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment(value: false, label: Text('Local')),
+                    ButtonSegment(value: true, label: Text('Backend')),
+                  ],
+                  selected: {_useBackend},
+                  onSelectionChanged: (s) {
+                    setState(() {
+                      _useBackend = s.first;
+                      _result = '';
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
                 // Direction toggle
                 SegmentedButton<bool>(
                   segments: const [

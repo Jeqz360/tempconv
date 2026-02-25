@@ -29,12 +29,12 @@ spec:
             cpu: "500m"
             memory: "128Mi"
         readinessProbe:
-          grpc:
+          tcpSocket:
             port: 50051
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
-          grpc:
+          tcpSocket:
             port: 50051
           initialDelaySeconds: 10
           periodSeconds: 20
